@@ -12,7 +12,8 @@ runs:
   steps:
     - if: ${{ ! contains(toJSON(env), 'current-version') }}
       name: Get current version
-      uses: ./.github/actions/current-version
+      uses: dan-drew/actions/current-version@main
+
     - id: get
       name: Next version
       shell: bash
