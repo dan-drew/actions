@@ -1,0 +1,21 @@
+name: current-version
+description: Retrieve the current version
+author: Dan Drew
+
+runs:
+  using: composite
+  steps:
+    - id: get
+      name: Get version
+      shell: bash
+      run: |
+        # Get current version
+        # set -x
+        git tag -l 'v*'
+        readonly latest=`git tag -l 'v*' | grep -E 'v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+' | tail -n1`
+        echo current-version=${latest#v} > $GITHUB_ENV
+        if [[ -z "${latest}" ]]; then
+          echo 'No version found'
+        else
+          echo "Version: ${latest#v}"
+        fi

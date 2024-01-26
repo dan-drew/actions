@@ -1,0 +1,57 @@
+name: next-version
+description: Retrieve the current version
+author: Dan Drew
+
+inputs:
+  suffix:
+    description: 'Version suffix (e.g. -dev for branch builds)'
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - if: ${{ ! contains(toJSON(env), 'current-version') }}
+      name: Get current version
+      uses: ./.github/actions/current-version
+    - id: get
+      name: Next version
+      shell: bash
+      run: |
+        # Get next version
+        # set -xe -o pipefail
+        readonly latest=${{ env.current-version }}
+        readonly default_version=( "${{ env.major_version }}" "${{ env.minor_version || '0' }}" "0" )
+        declare -a new_version
+
+        if [[ -z "${default_version[0]}" ]]; then
+          echo Major version is required
+          exit 1
+        fi
+
+        function set_default_version() {
+          new_version=("${default_version[@]}")
+        }
+
+        function increment_version() {
+          readarray -t -d '.' new_version <<< "${latest}"
+          # echo "${new_version[@]}"
+          readonly old=$(( new_version[0] * 10000 + new_version[1] ))
+          readonly new=$(( default_version[0] * 10000 + default_version[1] ))
+
+          if [[ ${old} -gt ${new} ]]; then
+            echo 'Attempt to apply lower version number'
+            exit 1
+          elif [[ ${old} -lt ${new} ]]; then
+            set_default_version
+          else
+            new_version[2]=$(( new_version[2] + 1 ))
+          fi
+        }
+
+        if [[ -n "${latest}" ]]; then
+          increment_version
+        else
+          set_default_version
+        fi
+
+        echo next-version="${new_version[0]}.${new_version[1]}.${new_version[2]}${{ inputs.suffix }}" > $GITHUB_ENV
