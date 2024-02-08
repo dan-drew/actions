@@ -9,7 +9,7 @@ runs:
       shell: bash
       run: |
         # Push tags
-        readonly new_tag=v${{ env.next-version }}
+        readonly new_tag=v${{ env.next_version }}
 
         if [[ "${new_tag}" == 'v' ]]; then
           echo 'No new version found'

@@ -10,7 +10,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - if: ${{ ! contains(toJSON(env), 'current-version') }}
+    - if: ${{ ! contains(toJSON(env), 'current_version') }}
       name: Get current version
       uses: dan-drew/actions/current-version@main
 
@@ -20,7 +20,7 @@ runs:
       run: |
         # Get next version
         # set -xe -o pipefail
-        readonly latest=${{ env.current-version }}
+        readonly latest=${{ env.current_version }}
         readonly default_version=( "${{ env.major_version }}" "${{ env.minor_version || '0' }}" "0" )
         declare -a new_version
 
@@ -55,4 +55,4 @@ runs:
           set_default_version
         fi
 
-        echo next-version="${new_version[0]}.${new_version[1]}.${new_version[2]}${{ inputs.suffix }}" > $GITHUB_ENV
+        echo next_version="${new_version[0]}.${new_version[1]}.${new_version[2]}${{ inputs.suffix }}" > $GITHUB_ENV

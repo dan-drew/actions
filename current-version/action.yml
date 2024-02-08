@@ -13,7 +13,7 @@ runs:
         # set -x
         git tag -l 'v*'
         readonly latest=`git tag -l 'v*' | grep -E 'v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+' | tail -n1`
-        echo current-version=${latest#v} > $GITHUB_ENV
+        echo current_version=${latest#v} > $GITHUB_ENV
         if [[ -z "${latest}" ]]; then
           echo 'No version found'
         else
